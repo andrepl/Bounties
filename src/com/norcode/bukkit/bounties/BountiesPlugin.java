@@ -82,7 +82,11 @@ public class BountiesPlugin extends JavaPlugin implements Listener {
 				listBounties(sender, params);
 				break;
 			case "locate":
-				locateBounty(sender, params);
+				if (getConfig().getBoolean("allow_locate")) {
+					locateBounty(sender, params);
+				} else {
+					sender.sendMessage(getMsg("locate_disabled"));
+				}
 				break;
 			case "help":
 				help(sender, params);
@@ -313,8 +317,8 @@ public class BountiesPlugin extends JavaPlugin implements Listener {
    }
    
    public void getLocation(Player hunter, Player target) {
-	   double distance = hunter.getLocation().distance(target.getLocation());
-	   hunter.sendMessage(getMsg("locate", "target", target.getName(), "distance", Double.toString(distance)));
+	   int distance = (int)Math.floor(hunter.getLocation().distance(target.getLocation()));
+	   hunter.sendMessage(getMsg("locate", "target", target.getName(), "distance", Integer.toString(distance)));
    }
    
    public void listBounties(CommandSender sender, String[] params) {

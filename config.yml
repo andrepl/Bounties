@@ -2,6 +2,7 @@ expiry_days: 14
 tax_percentage: 5
 per_page: 5
 minimum_bounty: 50
+allow_locate: true
 locate_cost: 5
 messages:
     help:
@@ -24,6 +25,7 @@ messages:
     cancel_usage: "cancel <targetName>"
     list_usage: "Usage: list [mine|newest|oldest|highest|placed] [page]"
     locate_usage: "Usage: locate <playerName>"
+    locate_disabled: "The 'locate' command has been disabled."
     list_head_mine: "Bounties Placed Against You:"
     list_head_newest: "Newest Bounties:"
     list_head_oldest: "Bounties Nearing Expiry:"
