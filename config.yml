@@ -2,6 +2,7 @@ expiry_days: 14
 tax_percentage: 5
 per_page: 5
 minimum_bounty: 50
+maximum_bounty: -1
 allow_locate: true
 locate_cost: 5
 messages:
@@ -42,6 +43,7 @@ messages:
     claimed_bounty: "§c{ claimed_by }§f claimed the bounty on §c{ target }§f earing §c{ total }§f!"
     next_page: "Type: '/bounty list { type } { page }' for more results."
     minimum_bounty: "A minimum bounty of §c{ min }§f is required."
+    max_bounty_exceeded: "Sorry, the maximum bounty cannot exceed §c{ total }§f."
     insufficient_funds: "You do not have §c{ amount }§f." 
     locate: "§c{ target }§f is { distance }m away."
     no_results: "No Bounties."

@@ -169,6 +169,7 @@ public class BountiesPlugin extends JavaPlugin implements Listener {
 			return;
 		}
 		double min = getConfig().getDouble("minimum_bounty");
+		double max = getConfig().getDouble("maximum_bounty");
 		if (amount.doubleValue() < min) {
 			sender.sendMessage(getMsg("minimum_bounty", "min", 
 					NumberFormat.getCurrencyInstance().format(min)));
@@ -187,7 +188,13 @@ public class BountiesPlugin extends JavaPlugin implements Listener {
 			return;
 		} else {
 			Bounty b = persistence.getBounty(p.getName());
+			
 			if (b == null) {
+				if (max != -1 && amount.doubleValue() > max) {
+					sender.sendMessage(getMsg("max_bounty_exceeded"));
+					getEconomy().depositPlayer(sender.getName(), amount.doubleValue());
+					return;
+				}
 				b = new Bounty();
 				b.setTarget(p.getName());
 				b.setAdded(new Date());
@@ -200,7 +207,13 @@ public class BountiesPlugin extends JavaPlugin implements Listener {
 				persistence.saveBounty(b);
 				notifyNewBounty(b);
 			} else {
-				b.setTotal(b.getTotal().add(removeTax(amount)));
+				BigDecimal newTotal = b.getTotal().add(removeTax(amount));
+				if (max != -1 && newTotal.doubleValue() > max) {
+					sender.sendMessage(getMsg("max_bounty_exceeded"));
+					getEconomy().depositPlayer(sender.getName(), amount.doubleValue());
+					return;
+				}
+				b.setTotal(newTotal);
 				if (!sender.getName().equals(b.getAddedBy())) {
 					Set<String> contribs = new HashSet<String>();
 					String cs = sender.getName() + ",";
