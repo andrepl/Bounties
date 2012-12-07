@@ -1,0 +1,13 @@
+name: Bounties
+main: com.norcode.bukkit.bounties.BountiesPlugin
+version: 0.0.4
+database: true
+depend: [Vault]
+
+commands:
+   bounty:
+      description: View/List/Add Bounties.
+      usage: /<command>
+      permission: bounties.use
+      permission-message: You do not have permission to use the bounty system.
+      
