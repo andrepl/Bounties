@@ -49,4 +49,5 @@ messages:
     no_results: "No Bounties."
     config_reloaded: "Bounties configuration reloaded."
     no_bounty: "There is no bounty on §c{ target }§f."
+    cannot-self-claim: "You can't claim a bounty on yourself."
     my_bounty: "There is a bounty of §c{ total }§f on your head!  It was started by §c{ added_by }§f and §c{ num_contributors }§f have contributed to it.  The bounty expires { expires }."

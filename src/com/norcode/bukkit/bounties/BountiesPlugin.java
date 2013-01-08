@@ -228,9 +228,10 @@ public class BountiesPlugin extends JavaPlugin implements Listener {
 				}
 				b.setExpires(addDays(new Date(), getConfig().getInt("expiry_days")));
 				persistence.saveBounty(b);
-				watchedPlayers.add(b.getTarget());
 				notifyUpdatedBounty(b, sender.getName());
 			}
+			watchedPlayers.add(b.getTarget());
+
 		}
 	}
 	
@@ -436,6 +437,10 @@ public class BountiesPlugin extends JavaPlugin implements Listener {
 		Player killer = event.getEntity().getKiller();
 		if (killer == null) return;
 		if (!killer.hasPermission("bounties.use")) return;
+		if (killer.getName().equals(event.getEntity().getName())) {
+			killer.sendMessage("cannot-self-claim");
+			return;
+		}
 		
 		if (watchedPlayers.contains(killed.getName())) {
 			Bounty b = persistence.getBounty(killed.getName());
