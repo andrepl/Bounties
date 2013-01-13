@@ -89,9 +89,11 @@ public class Bounty {
 	
 	public int getNumContributors() {
 		int i = 0;
-		for (String s: contributors.split(",")) {
-			if (s.trim().length() >= 1) {
-				i++;
+		if (contributors != null) {
+			for (String s: contributors.split(",")) {
+				if (s.trim().length() >= 1) {
+					i++;
+				}
 			}
 		}
 		return i;

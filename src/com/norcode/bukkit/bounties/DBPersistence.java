@@ -1,9 +1,12 @@
 package com.norcode.bukkit.bounties;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.PersistenceException;
+
+import org.bukkit.entity.Player;
 
 import com.avaje.ebean.Query;
 
@@ -23,73 +26,157 @@ public class DBPersistence implements IPersistence {
 	}
 
 	@Override
-	public List<Bounty> getHighestBounties(int page) {
+	public List<Bounty> getHighestBounties(boolean online, int page) {
+		List<String> players = new ArrayList<String>();
+		Query<Bounty> query;
 		int PER_PAGE = plugin.getConfig().getInt("per_page");
-		Query<Bounty> query = plugin.getDatabase().find(Bounty.class)
-			.orderBy("total desc")
-			.where()
-				.gt("expires", new Date())
-				.isNull("claimed")
-			.setMaxRows(PER_PAGE)
-			.setFirstRow(PER_PAGE*(page-1));
+		if (online) {
+			for (Player p: plugin.getServer().getOnlinePlayers()) {
+				players.add(p.getName());
+			}
+			query = plugin.getDatabase().find(Bounty.class)
+					.orderBy("total desc")
+					.where()
+						.gt("expires", new Date())
+						.isNull("claimed")
+						.in("target", players)
+					.setMaxRows(PER_PAGE)
+					.setFirstRow(PER_PAGE*(page-1));
+		} else {
+			query = plugin.getDatabase().find(Bounty.class)
+					.orderBy("total desc")
+					.where()
+						.gt("expires", new Date())
+						.isNull("claimed")
+					.setMaxRows(PER_PAGE)
+					.setFirstRow(PER_PAGE*(page-1));
+		}
+		
 		List<Bounty> results = query.findList();
 		return results;
 	}
 
 	@Override
-	public List<Bounty> getNewestBounties(int page) {
+	public List<Bounty> getNewestBounties(boolean online, int page) {
+		List<String> players = new ArrayList<String>();
+		Query<Bounty> query;
 		int PER_PAGE = plugin.getConfig().getInt("per_page");
-		Query<Bounty> query = plugin.getDatabase().find(Bounty.class)
-				.where()
-					.gt("expires", new Date())
-					.isNull("claimed")
-				.orderBy("added desc")
-				.setMaxRows(PER_PAGE)
-				.setFirstRow(PER_PAGE*(page-1));
-			List<Bounty> results = query.findList();
-			return results;
-	}
-
-	@Override
-	public List<Bounty> getOldestBounties(int page) {
-		int PER_PAGE = plugin.getConfig().getInt("per_page");
-		Query<Bounty> query = plugin.getDatabase().find(Bounty.class)
-				.where()
-					.gt("expires", new Date())
-					.isNull("claimed")
-				.orderBy("added asc")
-				.setMaxRows(PER_PAGE)
-				.setFirstRow(PER_PAGE*(page-1));
-			List<Bounty> results = query.findList();
-			return results;	
-	}
-
-	@Override
-	public List<Bounty> getPlayerBountiesPlaced(String playerName, int page) {
-		int PER_PAGE = plugin.getConfig().getInt("per_page");
-		List<Bounty> results = plugin.getDatabase().find(Bounty.class)
-				
-				.orderBy("added desc")
-				.setMaxRows(PER_PAGE)
-				.setFirstRow(PER_PAGE*(page-1))
-				.where()
-					.eq("added_by", playerName)
-					.gt("expires", new Date())
-					
-				.findList();
+		if (online) {
+			for (Player p: plugin.getServer().getOnlinePlayers()) {
+				players.add(p.getName());
+			}
+			query = plugin.getDatabase().find(Bounty.class)
+					.orderBy("added desc")
+					.where()
+						.gt("expires", new Date())
+						.isNull("claimed")
+						.in("target", players)
+					.setMaxRows(PER_PAGE)
+					.setFirstRow(PER_PAGE*(page-1));
+		} else {
+			query = plugin.getDatabase().find(Bounty.class)
+					.orderBy("added desc")
+					.where()
+						.gt("expires", new Date())
+						.isNull("claimed")
+					.setMaxRows(PER_PAGE)
+					.setFirstRow(PER_PAGE*(page-1));
+		}
+		
+		List<Bounty> results = query.findList();
 		return results;
 	}
 
 	@Override
-	public List<Bounty> getPlayerBountiesOn(String playerName, int page) {
+	public List<Bounty> getOldestBounties(boolean online, int page) {
+		List<String> players = new ArrayList<String>();
+		Query<Bounty> query;
 		int PER_PAGE = plugin.getConfig().getInt("per_page");
-		List<Bounty> results = plugin.getDatabase().find(Bounty.class)
-				.orderBy("added desc")
-				.setMaxRows(PER_PAGE)
-				.setFirstRow(PER_PAGE*(page-1))
-				.where()
-					.eq("target", playerName)
-				.findList();
+		if (online) {
+			for (Player p: plugin.getServer().getOnlinePlayers()) {
+				players.add(p.getName());
+			}
+			query = plugin.getDatabase().find(Bounty.class)
+					.orderBy("added asc")
+					.where()
+						.gt("expires", new Date())
+						.isNull("claimed")
+						.in("target", players)
+					.setMaxRows(PER_PAGE)
+					.setFirstRow(PER_PAGE*(page-1));
+		} else {
+			query = plugin.getDatabase().find(Bounty.class)
+					.orderBy("added asc")
+					.where()
+						.gt("expires", new Date())
+						.isNull("claimed")
+					.setMaxRows(PER_PAGE)
+					.setFirstRow(PER_PAGE*(page-1));
+		}
+		
+		List<Bounty> results = query.findList();
+		return results;
+	}
+
+	@Override
+	public List<Bounty> getPlayerBountiesPlaced(String playerName, boolean online, int page) {
+		List<String> players = new ArrayList<String>();
+		Query<Bounty> query;
+		int PER_PAGE = plugin.getConfig().getInt("per_page");
+		if (online) {
+			for (Player p: plugin.getServer().getOnlinePlayers()) {
+				players.add(p.getName());
+			}
+			query = plugin.getDatabase().find(Bounty.class)
+					.orderBy("added desc")
+					.where()
+						.gt("expires", new Date())
+						.eq("added_by", playerName)
+						.in("target", players)
+					.setMaxRows(PER_PAGE)
+					.setFirstRow(PER_PAGE*(page-1));
+		} else {
+			query = plugin.getDatabase().find(Bounty.class)
+					.orderBy("added desc")
+					.where()
+						.gt("expires", new Date())
+						.eq("added_by", playerName)
+					.setMaxRows(PER_PAGE)
+					.setFirstRow(PER_PAGE*(page-1));
+		}
+		
+		List<Bounty> results = query.findList();
+		return results;
+	}
+
+	@Override
+	public List<Bounty> getPlayerBountiesOn(String playerName, boolean online, int page) {
+		List<String> players = new ArrayList<String>();
+		Query<Bounty> query;
+		int PER_PAGE = plugin.getConfig().getInt("per_page");
+		if (online) {
+			for (Player p: plugin.getServer().getOnlinePlayers()) {
+				players.add(p.getName());
+			}
+			query = plugin.getDatabase().find(Bounty.class)
+					.orderBy("added desc")
+					.where()
+						.gt("expires", new Date())
+						.eq("target", playerName)
+						.in("added_by", players)
+					.setMaxRows(PER_PAGE)
+					.setFirstRow(PER_PAGE*(page-1));
+		} else {
+			query = plugin.getDatabase().find(Bounty.class)
+					.orderBy("added desc")
+					.where()
+						.gt("expires", new Date())
+						.eq("target", playerName)
+					.setMaxRows(PER_PAGE)
+					.setFirstRow(PER_PAGE*(page-1));
+		}
+		
+		List<Bounty> results = query.findList();
 		return results;
 	}
 

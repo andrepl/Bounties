@@ -338,34 +338,46 @@ public class BountiesPlugin extends JavaPlugin implements Listener {
    public void listBounties(CommandSender sender, String[] params) {
        int page = 1;
        String type = "newest";
-	   if (params.length == 2) {
-    	   type = params[0];
-    	   try {
-    		   page = Integer.parseInt(params[1]);
-    	   } catch (IllegalArgumentException e) {
+       boolean online = false;
+       
+       if (params.length > 0) {
+    	   if (params.length > 3) {
     		   sender.sendMessage(getMsg("list_usage"));
     		   return;
     	   }
-	   } else if (params.length == 1) {
-		   type = params[0];
-	   }
+    	   int i = params.length-1;
+    	   try {
+    		   page = Integer.parseInt(params[i].trim());
+    		   i -= 1;
+    	   } catch (IllegalArgumentException ex) {
+    	   }
+    	   if (i >= 0) {
+    		   if (params[i].toLowerCase().equals("online")) {
+    			   online = true;
+    			   i -= 1;
+    		   }
+    	   }
+    	   if (i >= 0) {
+    		   type = params[i];
+    	   }
+       }
 	   
 	   List<Bounty> bounties;
 	   switch (type.toLowerCase()) {
 	   case "highest":
-		   bounties = persistence.getHighestBounties(page);
+		   bounties = persistence.getHighestBounties(online, page);
 		   break;
 	   case "newest":
-		   bounties = persistence.getNewestBounties(page);
+		   bounties = persistence.getNewestBounties(online, page);
 		   break;
 	   case "oldest":
-		   bounties = persistence.getOldestBounties(page);
+		   bounties = persistence.getOldestBounties(online, page);
 		   break;
 	   case "mine":
-		   bounties = persistence.getPlayerBountiesOn(sender.getName(), page);
+		   bounties = persistence.getPlayerBountiesOn(sender.getName(), online, page);
 		   break;
 	   case "placed":
-		   bounties = persistence.getPlayerBountiesPlaced(sender.getName(), page);
+		   bounties = persistence.getPlayerBountiesPlaced(sender.getName(), online, page);
 		   break;
 	   default:
 		   sender.sendMessage(getMsg("list_usage"));

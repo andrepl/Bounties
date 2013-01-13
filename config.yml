@@ -24,7 +24,7 @@ messages:
     usage: "Usage: /bounty [add|list|cancel|locate|mine|help] [options..]"
     add_usage: "Usage: add <targetName> <amount>"
     cancel_usage: "cancel <targetName>"
-    list_usage: "Usage: list [mine|newest|oldest|highest|placed] [page]"
+    list_usage: 'Usage: list [mine|newest|oldest|highest|placed] ["online"] [page]'
     locate_usage: "Usage: locate <playerName>"
     locate_disabled: "The 'locate' command has been disabled."
     list_head_mine: "Bounties Placed Against You:"
