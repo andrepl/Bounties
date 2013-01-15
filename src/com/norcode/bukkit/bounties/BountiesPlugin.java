@@ -326,12 +326,15 @@ public class BountiesPlugin extends JavaPlugin implements Listener {
 					   NumberFormat.getCurrencyInstance().format(getConfig().getDouble("locate_cost"))));
 			   return;
 		   }
+		   sender.sendMessage(getMsg("money_taken",  "amount", NumberFormat.getCurrencyInstance().format(getConfig().getDouble("locate_cost"))));
+		   
 	   }
 	   getLocation((Player)sender, target);
    }
    
    public void getLocation(Player hunter, Player target) {
 	   int distance = (int)Math.floor(hunter.getLocation().distance(target.getLocation()));
+	   
 	   hunter.sendMessage(getMsg("locate", "target", target.getName(), "distance", Integer.toString(distance)));
    }
    

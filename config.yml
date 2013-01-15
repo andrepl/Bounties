@@ -47,6 +47,7 @@ messages:
     insufficient_funds: "You do not have §c{ amount }§f." 
     locate: "§c{ target }§f is { distance }m away."
     no_results: "No Bounties."
+    money_taken: "{ amount } has been taken from your account."
     config_reloaded: "Bounties configuration reloaded."
     no_bounty: "There is no bounty on §c{ target }§f."
     cannot-self-claim: "You can't claim a bounty on yourself."
