@@ -1,6 +1,7 @@
 name: Bounties
 main: com.norcode.bukkit.bounties.BountiesPlugin
-version: 0.0.9
+author: metalhedd
+version: 0.0.10
 database: true
 depend: [Vault]
 

@@ -16,6 +16,7 @@ import java.util.regex.Pattern;
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
 
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -36,7 +37,17 @@ public class BountiesPlugin extends JavaPlugin implements Listener {
     public static Economy economy = null;
     private IPersistence persistence;
     private Set<String> watchedPlayers;
-    
+
+    static final Pattern colorPattern = Pattern.compile("(&[0-9a-flmnor])", Pattern.CASE_INSENSITIVE);
+    public static String convertColors(String s) {
+        Matcher m = colorPattern.matcher(s);
+        StringBuffer sb = new StringBuffer();
+        while (m.find())
+            m.appendReplacement(sb, ChatColor.COLOR_CHAR + m.group(1).substring(1));
+        m.appendTail(sb);
+        return sb.toString();
+    }
+
 	@Override
 	public void onEnable() {
 		FileConfiguration config = getConfig();
@@ -71,43 +82,34 @@ public class BountiesPlugin extends JavaPlugin implements Listener {
 			}
 			
 			String[] params = Arrays.copyOfRange(args, 1, args.length);
-			switch(args[0].toLowerCase()) {
-			case "mine":
+            String action = args[0].toLowerCase();
+			if (action.equals("mine"))  {
 				myBounty(sender, params);
-				break;
-			case "add":
+            } else if (action.equals("add")) {
 				addBounty(sender, params);
-				break;
-			case "list":
+            } else if (action.equals("list")) {
 				listBounties(sender, params);
-				break;
-			case "locate":
+            } else if (action.equals("locate")) {
 				if (getConfig().getBoolean("allow_locate")) {
 					locateBounty(sender, params);
 				} else {
 					sender.sendMessage(getMsg("locate_disabled"));
 				}
-				break;
-			case "help":
+            } else if (action.equals("help")) {
 				help(sender, params);
-				break;
-			case "cancel":
+            } else if (action.equals("cancel")) {
 				cancelBounty(sender, params);
-				break;
-				
-			case "reload":
+            } else if (action.equals("reload")) {
 				if (sender.hasPermission("bounties.admin")) {
 					reloadConfig();
 					sender.sendMessage(getMsg("config_reloaded"));
-					break;
-				} else {
-					return false;
+                } else {
+                    return false;
 				}
-				
-			default:
+            } else {
 				sender.sendMessage(getMsg("usage"));
 			}
-			return true;
+            return true;
 		}
 		return false;
 	}
@@ -243,6 +245,7 @@ public class BountiesPlugin extends JavaPlugin implements Listener {
 
    public String getMsg(String key, String... params) {
 		String t = getConfig().getConfigurationSection("messages").getString(key);
+
 		String k;
 		String v;
 		for (int i=0;i<params.length-1;i+=2) {
@@ -252,7 +255,7 @@ public class BountiesPlugin extends JavaPlugin implements Listener {
 			t = t.replaceAll("\\{\\s*" + Pattern.quote(k) + "\\s*\\}", Matcher.quoteReplacement(v));
 			
 		}
-		return t;
+		return convertColors(t);
 	}
 
    public void notifyCancelledBounty(Bounty b, Player p) {
@@ -366,23 +369,18 @@ public class BountiesPlugin extends JavaPlugin implements Listener {
        }
 	   
 	   List<Bounty> bounties;
-	   switch (type.toLowerCase()) {
-	   case "highest":
+
+	   if (type.equalsIgnoreCase("highest")) {
 		   bounties = persistence.getHighestBounties(online, page);
-		   break;
-	   case "newest":
+       } else if (type.equalsIgnoreCase("newest")) {
 		   bounties = persistence.getNewestBounties(online, page);
-		   break;
-	   case "oldest":
+	   } else if (type.equalsIgnoreCase("oldest")) {
 		   bounties = persistence.getOldestBounties(online, page);
-		   break;
-	   case "mine":
+       } else if (type.equalsIgnoreCase("mine")) {
 		   bounties = persistence.getPlayerBountiesOn(sender.getName(), online, page);
-		   break;
-	   case "placed":
+       } else if (type.equalsIgnoreCase("placed")) {
 		   bounties = persistence.getPlayerBountiesPlaced(sender.getName(), online, page);
-		   break;
-	   default:
+       } else {
 		   sender.sendMessage(getMsg("list_usage"));
 		   return;
 	   }

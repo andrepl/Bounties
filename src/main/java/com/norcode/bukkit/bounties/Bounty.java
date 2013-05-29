@@ -21,7 +21,7 @@ public class Bounty {
 	@Column private Date added;
 	@Column(name="added_by") private String addedBy;
 	
-	@Lob @Column private String contributors;
+	@Column private String contributors;
 	
 	@Column(scale=2) private BigDecimal total;
 	
